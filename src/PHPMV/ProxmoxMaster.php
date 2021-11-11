@@ -14,7 +14,7 @@ class ProxmoxMaster extends RemoteHost {
 	}
 
 	public function getVMsAsArray(): array {
-		$string = $this->getIptablesNat();
+		$string = $this->getVMs();
 		return CommandParser::readCommandOutput($string, '', '', [
 			'vmid',
 			'name',
