@@ -42,8 +42,12 @@ class RemoteHost {
 		return $this->waitFor($prompt);
 	}
 
+	public function runCommand(string $command, ?string $prompt = null): string {
+		$this->ssh->write("$command\n");
+		return $this->waitFor($prompt);
+	}
+
 	public function getSshInstance(): SSH2 {
 		return $this->ssh;
 	}
 }
-
