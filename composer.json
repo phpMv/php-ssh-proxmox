@@ -1,7 +1,7 @@
 {
   "name": "phpmv/php-ssh-proxmox",
-  "description": "A PHP library",
-  "type": "extension",
+  "description": "A php library running with SSH for proxmox querying",
+  "type": "library",
   "keywords": [
     "php",
     "framework",
