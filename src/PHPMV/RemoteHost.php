@@ -41,5 +41,9 @@ class RemoteHost {
 		$this->ssh->write("$password\n");
 		return $this->waitFor($prompt);
 	}
+
+	public function getSshInstance(): SSH2 {
+		return $this->ssh;
+	}
 }
 
