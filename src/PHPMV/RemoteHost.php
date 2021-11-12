@@ -2,6 +2,7 @@
 namespace PHPMV;
 
 use phpseclib3\Net\SSH2;
+use PHPMV\utils\CommandParser;
 
 class RemoteHost {
 
@@ -49,5 +50,25 @@ class RemoteHost {
 
 	public function getSshInstance(): SSH2 {
 		return $this->ssh;
+	}
+
+	public function disconnect(): void {
+		$this->ssh->disconnect();
+	}
+
+	public function getVhosts() {
+		return $this->runCommand('apache2ctl -t -D DUMP_VHOSTS');
+	}
+
+	public function getVhostsAsArray(int $port = 80) {
+		$result = $this->getVhosts();
+		return CommandParser::readCommandOutput($result, "*:$port                   is a NameVirtualHost", '*:', [
+			'port',
+			'host',
+			'config'
+		], [], [
+			'port',
+			'namevhost'
+		]);
 	}
 }

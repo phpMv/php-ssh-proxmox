@@ -17,9 +17,9 @@ class CommandParser {
 		return \substr($output, $ini, $len);
 	}
 
-	public static function readCommandOutput(string $output, string $start = '', string $end = '', array $headers = [], array $excludeLines = []): array {
+	public static function readCommandOutput(string $output, string $start = '', string $end = '', array $headers = [], array $excludeLines = [], array $ignore = []): array {
 		$string = self::extractStringBetween($output, $start, $end);
-		return self::readLines($string, $headers, $excludeLines);
+		return self::readLines($string, $headers, $excludeLines, $ignore);
 	}
 
 	private static function readLines($string, $header, $exclude = [
