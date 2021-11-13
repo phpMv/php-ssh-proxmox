@@ -1,8 +1,8 @@
 <?php
 namespace PHPMV;
 
-use phpseclib3\Net\SSH2;
 use PHPMV\utils\CommandParser;
+use phpseclib3\Net\SFTP;
 
 class RemoteHost {
 
@@ -12,7 +12,7 @@ class RemoteHost {
 		'config'
 	];
 
-	private SSH2 $ssh;
+	private SFTP $ssh;
 
 	private string $prompt;
 
@@ -24,7 +24,7 @@ class RemoteHost {
 	}
 
 	public function login($host, $user, $password, $port = 22): bool {
-		$this->ssh = new SSH2($host, $port);
+		$this->ssh = new SFTP($host, $port);
 		return $this->ssh->login($user, $password);
 	}
 
@@ -54,7 +54,7 @@ class RemoteHost {
 		return $this->waitFor($prompt);
 	}
 
-	public function getSshInstance(): SSH2 {
+	public function getSshInstance(): SFTP {
 		return $this->ssh;
 	}
 

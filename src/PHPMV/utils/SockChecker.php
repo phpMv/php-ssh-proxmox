@@ -24,7 +24,7 @@ class SockChecker {
 			$result = \is_resource($connection);
 			\fclose($connection);
 			return $result;
-		} catch (\Error $e) {
+		} catch (\ErrorException $e) {
 			return false;
 		} finally {
 			\restore_error_handler();
@@ -41,7 +41,7 @@ class SockChecker {
 				\fclose($connection);
 				return $result;
 			}
-		} catch (\Error $e) {
+		} catch (\ErrorException $e) {
 			return null;
 		} finally {
 			\restore_error_handler();
