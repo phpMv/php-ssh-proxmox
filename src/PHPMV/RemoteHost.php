@@ -157,7 +157,7 @@ class RemoteHost {
 	 */
 	public function putFile($remote_file, $data, $mode = 2, $start = - 1, $local_start = - 1, $progressCallback = null) {
 		if (! $this->ssh->put($remote_file, $data, $mode, $start, $local_start, $progressCallback)) {
-			throw new \RuntimeException(\implode($this->ssh->getSFTPErrors(), "\n"));
+			throw new \RuntimeException("\n", \implode($this->ssh->getSFTPErrors()));
 		}
 		return true;
 	}
