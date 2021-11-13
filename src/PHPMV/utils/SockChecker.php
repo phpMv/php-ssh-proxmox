@@ -10,6 +10,7 @@ class SockChecker {
 		80 => 'http',
 		81 => 'http',
 		110 => 'pop3',
+		115 => 'sftp',
 		443 => 'https',
 		3306 => 'mysql',
 		8080 => 'tomcat'
