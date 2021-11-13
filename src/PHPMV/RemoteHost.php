@@ -6,6 +6,12 @@ use PHPMV\utils\CommandParser;
 
 class RemoteHost {
 
+	public const VHOST_FIELDS = [
+		'port',
+		'host',
+		'config'
+	];
+
 	private SSH2 $ssh;
 
 	private string $prompt;
@@ -62,11 +68,7 @@ class RemoteHost {
 
 	public function getVhostsAsArray(int $port = 80) {
 		$result = $this->getVhosts();
-		return CommandParser::readCommandOutput($result, "*:$port                   is a NameVirtualHost", '*:', [
-			'port',
-			'host',
-			'config'
-		], [], [
+		return CommandParser::readCommandOutput($result, "*:$port                   is a NameVirtualHost", '*:', self::VHOST_FIELDS, [], [
 			'port',
 			'namevhost'
 		]);

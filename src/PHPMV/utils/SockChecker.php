@@ -16,18 +16,34 @@ class SockChecker {
 	];
 
 	public static function isOpen(string $host, int $port): bool {
-		$connection = @fsockopen($host, $port);
-		$result = \is_resource($connection);
-		\fclose($connection);
-		return $result;
+		\set_error_handler(function () { /* ignore errors */
+		});
+		try {
+			$connection = fsockopen($host, $port);
+			$result = \is_resource($connection);
+			\fclose($connection);
+			return $result;
+		} catch (\Error $e) {
+			return false;
+		} finally {
+			\restore_error_handler();
+		}
 	}
 
 	public static function getService(string $host, int $port): ?string {
-		$connection = @fsockopen($host, $port);
-		if (\is_resource($connection)) {
-			$result = \getservbyport($port, 'tcp');
-			\fclose($connection);
-			return $result;
+		\set_error_handler(function () { /* ignore errors */
+		});
+		try {
+			$connection = fsockopen($host, $port);
+			if (\is_resource($connection)) {
+				$result = \getservbyport($port, 'tcp');
+				\fclose($connection);
+				return $result;
+			}
+		} catch (\Error $e) {
+			return null;
+		} finally {
+			\restore_error_handler();
 		}
 		return null;
 	}
