@@ -26,22 +26,27 @@ class ProxmoxMaster extends RemoteHost {
 	];
 
 	public function getVMs(): string {
+		$this->checkBash();
 		return $this->runCommand('qm list');
 	}
 
 	public function vmStart(string $vmid): string {
+		$this->checkBash();
 		return $this->runCommand("qm start $vmid");
 	}
 
 	public function vmStop(string $vmid): string {
+		$this->checkBash();
 		return $this->runCommand("qm stop $vmid");
 	}
 
 	public function vmStatus(string $vmid): string {
+		$this->checkBash();
 		return $this->runCommand("qm status $vmid");
 	}
 
 	public function getIptablesNat(): string {
+		$this->checkBash();
 		return $this->runCommand('iptables -t nat -L');
 	}
 
@@ -56,10 +61,12 @@ class ProxmoxMaster extends RemoteHost {
 	}
 
 	public function iptablesRemoveNatRule(int $lineNumber): string {
+		$this->checkBash();
 		return $this->runCommand("iptables -t nat -D PREROUTING $lineNumber");
 	}
 
 	public function iptablesAddNatRule(string $dport, string $to, string $protocol = 'tcp') {
+		$this->checkBash();
 		return $this->runCommand("iptables -t nat -A PREROUTING -i vmbr0 -p $protocol --dport $dport -j DNAT --to $to");
 	}
 }

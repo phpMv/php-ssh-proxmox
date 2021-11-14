@@ -3,6 +3,7 @@ namespace PHPMV;
 
 use PHPMV\utils\CommandParser;
 use phpseclib3\Net\SFTP;
+use PHPMV\exceptions\SSHProxmoxException;
 
 class RemoteHost {
 
@@ -16,6 +17,8 @@ class RemoteHost {
 
 	private string $prompt;
 
+	private bool $hasbash = false;
+
 	private function waitForPrompt(?string $prompt = null): string {
 		if (isset($prompt)) {
 			return $this->ssh->read($prompt);
@@ -23,7 +26,22 @@ class RemoteHost {
 		return $this->ssh->read();
 	}
 
-	public function login($host, $user, $password, $port = 22): bool {
+	protected function checkBash() {
+		if (! $this->hasbash) {
+			throw new SSHProxmoxException('No active bash, execute runBash method before running a command!');
+		}
+	}
+
+	/**
+	 * Logs in to the remote host.
+	 *
+	 * @param string $host
+	 * @param string $user
+	 * @param string $password
+	 * @param int $port
+	 * @return bool
+	 */
+	public function login(string $host, string $user, string $password, int $port = 22): bool {
 		$this->ssh = new SFTP($host, $port);
 		return $this->ssh->login($user, $password);
 	}
@@ -32,6 +50,7 @@ class RemoteHost {
 		$this->ssh->setTimeout($timeout);
 		$this->ssh->enablePTY();
 		$this->ssh->exec('bash');
+		$this->hasbash = true;
 		return $this->waitFor($prompt);
 	}
 
@@ -43,6 +62,7 @@ class RemoteHost {
 	}
 
 	public function asSu(string $password, ?string $prompt = null): string {
+		$this->checkBash();
 		$this->ssh->write("sudo su\n");
 		$this->ssh->read('password for');
 		$this->ssh->write("$password\n");
@@ -50,11 +70,13 @@ class RemoteHost {
 	}
 
 	public function runCommand(string $command, ?string $prompt = null): string {
+		$this->checkBash();
 		$this->ssh->write("$command\n");
 		return $this->waitFor($prompt);
 	}
 
 	public function runInteractiveCommand(string $command, array $promptResponses = []): string {
+		$this->checkBash();
 		$this->ssh->write("$command\n");
 		foreach ($promptResponses as $prompt => $response) {
 			$this->ssh->read($prompt);
@@ -72,6 +94,7 @@ class RemoteHost {
 	}
 
 	public function getVhosts() {
+		$this->checkBash();
 		return $this->runCommand('apache2ctl -t -D DUMP_VHOSTS');
 	}
 
