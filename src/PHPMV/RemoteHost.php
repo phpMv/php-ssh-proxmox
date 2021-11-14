@@ -5,6 +5,15 @@ use PHPMV\utils\CommandParser;
 use phpseclib3\Net\SFTP;
 use PHPMV\exceptions\SSHProxmoxException;
 
+/**
+ * Connection to a remote host.
+ * PHPMV$remoteHost
+ * This class is part of php-ssh-proxmox
+ *
+ * @author jcheron <myaddressmail@gmail.com>
+ * @version 1.0.0
+ *
+ */
 class RemoteHost {
 
 	public const VHOST_FIELDS = [
@@ -15,7 +24,7 @@ class RemoteHost {
 
 	private SFTP $ssh;
 
-	private string $prompt;
+	protected string $prompt;
 
 	private bool $hasbash = false;
 
@@ -46,6 +55,13 @@ class RemoteHost {
 		return $this->ssh->login($user, $password);
 	}
 
+	/**
+	 * Runs bash with a timeout and a prompt for futur commands.
+	 *
+	 * @param int $timeout
+	 * @param string $prompt
+	 * @return string
+	 */
 	public function runBash(int $timeout = 3, ?string $prompt = null): string {
 		$this->ssh->setTimeout($timeout);
 		$this->ssh->enablePTY();
@@ -54,6 +70,12 @@ class RemoteHost {
 		return $this->waitFor($prompt);
 	}
 
+	/**
+	 * Waits for a prompt after a command.
+	 *
+	 * @param string $prompt
+	 * @return string
+	 */
 	public function waitFor(?string $prompt = null): string {
 		if (isset($prompt)) {
 			$this->prompt = $prompt;
@@ -61,6 +83,13 @@ class RemoteHost {
 		return $this->waitForPrompt($this->prompt);
 	}
 
+	/**
+	 * Runs a sudo su command.
+	 *
+	 * @param string $password
+	 * @param string $prompt
+	 * @return string
+	 */
 	public function asSu(string $password, ?string $prompt = null): string {
 		$this->checkBash();
 		$this->ssh->write("sudo su\n");
@@ -69,12 +98,26 @@ class RemoteHost {
 		return $this->waitFor($prompt);
 	}
 
+	/**
+	 * Runs a bash command.
+	 *
+	 * @param string $command
+	 * @param string $prompt
+	 * @return string
+	 */
 	public function runCommand(string $command, ?string $prompt = null): string {
 		$this->checkBash();
 		$this->ssh->write("$command\n");
 		return $this->waitFor($prompt);
 	}
 
+	/**
+	 * Runs a bash command requiring a user response.
+	 *
+	 * @param string $command
+	 * @param array $promptResponses
+	 * @return string
+	 */
 	public function runInteractiveCommand(string $command, array $promptResponses = []): string {
 		$this->checkBash();
 		$this->ssh->write("$command\n");
@@ -85,19 +128,38 @@ class RemoteHost {
 		return $this->waitFor();
 	}
 
+	/**
+	 * Returns tha active SSH or SFTP instance.
+	 *
+	 * @return SFTP
+	 */
 	public function getSshInstance(): SFTP {
 		return $this->ssh;
 	}
 
+	/**
+	 * Logouts from this host.
+	 */
 	public function disconnect(): void {
 		$this->ssh->disconnect();
 	}
 
-	public function getVhosts() {
+	/**
+	 * Returns the apache virtual hosts.
+	 *
+	 * @return string
+	 */
+	public function getVhosts(): string {
 		$this->checkBash();
 		return $this->runCommand('apache2ctl -t -D DUMP_VHOSTS');
 	}
 
+	/**
+	 * Returns an array of Apache virtual hosts using a port.
+	 *
+	 * @param int $port
+	 * @return array
+	 */
 	public function getVhostsAsArray(int $port = 80) {
 		$result = $this->getVhosts();
 		return CommandParser::readCommandOutput($result, "*:$port                   is a NameVirtualHost", '*:', self::VHOST_FIELDS, [], [

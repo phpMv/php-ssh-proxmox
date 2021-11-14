@@ -1,6 +1,15 @@
 <?php
 namespace PHPMV\utils;
 
+/**
+ * Manage a template.
+ * PHPMV/utils$TemplateFile
+ * This class is part of php-ssh-proxmox
+ *
+ * @author jcheron <myaddressmail@gmail.com>
+ * @version 1.0.0
+ *
+ */
 class TemplateFile {
 
 	private $originalContent;
