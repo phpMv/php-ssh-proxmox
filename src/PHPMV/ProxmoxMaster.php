@@ -94,7 +94,7 @@ class ProxmoxMaster extends RemoteHost {
 	 */
 	public function getVMsAsArray(): array {
 		$string = $this->getVMs();
-		return CommandParser::readCommandOutput($string, "qm list\n", $this->prompt ?? '', self::VM_FIELDS, [
+		return CommandParser::readCommandOutput($string, "qm list", $this->prompt ?? '', self::VM_FIELDS, [
 			0
 		]);
 	}

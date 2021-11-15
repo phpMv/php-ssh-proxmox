@@ -22,12 +22,20 @@ class CommandParser {
 	 */
 	public static function extractStringBetween(string $output, string $start = '', string $end = ''): string {
 		$ini = 0;
+		$output = \preg_replace('![ \t]+!', ' ', $output);
 		if ($start != '') {
-			$ini = \strpos($output, $start);
-			$ini += \strlen($start);
+			if (($ini = \strpos($output, $start)) !== false) {
+				$ini += \strlen($start);
+			} else {
+				return '';
+			}
 		}
 		if ($end != '') {
-			$len = \strpos($output, $end, $ini) - $ini;
+			if (($lastPos = \strpos($output, $end, $ini)) !== false) {
+				$len = \strpos($output, $end, $ini) - $ini;
+			} else {
+				$len = \strlen($output) - $ini;
+			}
 		} else {
 			$len = \strlen($output) - $ini;
 		}

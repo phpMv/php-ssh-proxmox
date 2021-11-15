@@ -162,9 +162,12 @@ class RemoteHost {
 	 */
 	public function getVhostsAsArray(int $port = 80) {
 		$result = $this->getVhosts();
-		return CommandParser::readCommandOutput($result, "*:$port                   is a NameVirtualHost", '*:', self::VHOST_FIELDS, [], [
+		return CommandParser::readCommandOutput($result, "*:$port is a NameVirtualHost", '*:', self::VHOST_FIELDS, [
+			0
+		], [
 			'port',
-			'namevhost'
+			'namevhost',
+			$this->prompt
 		]);
 	}
 
