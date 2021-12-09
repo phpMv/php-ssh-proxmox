@@ -78,6 +78,29 @@ class ProxmoxMaster extends RemoteHost {
 	}
 
 	/**
+	 * Clones a virtual machine
+	 *
+	 * @param string $vmid
+	 * @param string $newId
+	 * @return string
+	 */
+	public function vmClone(string $vmid,string $newId): string {
+		$this->checkBash();
+		return $this->runCommand("qm clone $vmid $newId");
+	}
+
+	/**
+	 * Deletes a virtual machine
+	 *
+	 * @param string $vmid
+	 * @return string
+	 */
+	public function vmDestroy(string $vmid): string {
+		$this->checkBash();
+		return $this->runCommand("qm destroy $vmid");
+	}
+
+	/**
 	 * Returns the iptables nat table.
 	 *
 	 * @return string
@@ -130,7 +153,7 @@ class ProxmoxMaster extends RemoteHost {
 	 * @param string $protocol
 	 * @return string
 	 */
-	public function iptablesAddNatRule(string $dport, string $to, string $protocol = 'tcp') {
+	public function iptablesAddNatRule(string $dport, string $to, string $protocol = 'tcp'): string {
 		$this->checkBash();
 		return $this->runCommand("iptables -t nat -A PREROUTING -i vmbr0 -p $protocol --dport $dport -j DNAT --to $to");
 	}
