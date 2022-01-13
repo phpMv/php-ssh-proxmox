@@ -10,7 +10,8 @@
   ],
   "require": {
     "php": ">=8.0",
-    "phpseclib/phpseclib": "^3.0"
+    "phpseclib/phpseclib": "^3.0",
+    "mrkampf/proxmox-ve": "^0.4.1"
   },
   "license": "Apache-2.0",
   "authors": [
